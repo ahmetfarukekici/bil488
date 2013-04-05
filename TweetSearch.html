@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+	<head>
+	
+		<title>TweetSearch</title>
+		
+		<style>
+		
+			.button
+			{
+				background-color: purple;
+				font-size: 20px;
+			}
+			#st
+			{
+				width: 620px;
+				height: 405px;
+			}
+			#twt
+			{
+				width: 620px;
+				height: 80px;
+			}
+		
+		</style>
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+		<script type="text/javascript">
+		
+			$(document).ready(function () {
+			
+				var button = document.getElementById('searchButton');
+				var txt = document.getElementById('searchText');
+
+				button.onclick = function search() {
+					
+					var appHtml = "<div id=\"st\" align=\"'center\">";
+					
+					$.getJSON("http://search.twitter.com/search.json?q="+txt.value+"&rpp=5&callback=?", function(data)
+					{
+					
+						if (data.results.length == 0)
+							appHtml += "<p style=\"color:darkgreen; font-size:16pt;\">No tweets...</p>"
+							
+						else {
+
+							$(data.results).each(function(i,v)
+							{
+									
+								appHtml += "<div id=\"twt\" style=\"background-color:green;\">" + 
+										   "<br><img vertical-align:\"center\" align=\"left\" src=" + this.profile_image_url +"></img>" + 
+										   "&nbsp&nbsp" + this.from_user_name + "&nbsp&nbsp" + "@" + this.from_user + 
+										   "&nbsp&nbsp" + " (" + this.created_at + ")" + 
+										   "<br>" + this.text +  
+										   "</div>";
+									
+							});	
+						
+						}
+						
+						appHtml += "</div>";
+						$('#tweets').html(appHtml);
+						
+					});
+					
+					var refresh = setInterval(function(){ $('#tweets').load(search()) }, 10000);
+					
+				};
+				
+			});
+		
+		</script>
+	
+	</head>
+	
+	<body style="background-color:lightblue;">
+		
+		<div align="center"><img src="http://imgim.com/tweetsearch.png"></img></div>
+		
+		<div align="center" style="padding:10px;">
+			
+			<input type="text" style="font-size:16pt;" id='searchText' />
+			<input type="button" class="button" value="Search" style="color:lightblue;" id='searchButton' />
+		
+		</div>
+		
+		<div align="center" id="tweets">
+		
+			<p style="color:darkgreen; font-size:16pt;" id='twbdhats'>Tweets will be displayed here after the search...</p>
+		
+		</div>
+		
+	</body>
+
+</html>
